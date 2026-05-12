@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Customer Records</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    .hover-link {
+      transition: all 0.3s ease;
+    }
+    .hover-link:hover {
+      background-color: #3b82f6;
+      color: white;
+      transform: scale(1.05);
+    }
+    .action-btn {
+      transition: all 0.2s ease;
+    }
+    .action-btn:active {
+      transform: scale(0.95);
+    }
+    .editable-input[disabled] {
+      border: none;
+      background-color: transparent;
+      cursor: default;
+    }
+    .editable-input:not([disabled]) {
+      border: 1px solid #ccc;
+      background-color: #fffbe6;
+      border-radius: 0.375rem;
+      padding: 0.25rem 0.5rem;
+    }
+  </style>
+</head>
+<body class="bg-gradient-to-br from-green-200 to-blue-200 min-h-screen flex flex-col items-center justify-start p-6 font-sans">
+
+  <div class="bg-white shadow-2xl rounded-3xl p-8 w-full max-w-6xl mt-8">
+    <h1 class="text-4xl font-extrabold text-center text-green-700 mb-8">📋 Customer Records</h1>
+
+    <div class="overflow-x-auto">
+      <table class="min-w-full table-auto text-left border-collapse rounded-xl overflow-hidden shadow-md">
+        <thead>
+          <tr class="bg-green-100 text-green-800 text-lg">
+            <th class="p-4 border-b">ID</th>
+            <th class="p-4 border-b">Name</th>
+            <th class="p-4 border-b">Email</th>
+            <th class="p-4 border-b">Phone</th>
+            <th class="p-4 border-b">Address</th>
+            <th class="p-4 border-b text-center">Actions</th>
+          </tr>
+        </thead>
+        <tbody id="recordsTable" class="bg-white text-gray-700 text-base">
+          <!-- Customer rows will be added here -->
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Navigation Buttons -->
+    <div class="flex flex-col sm:flex-row justify-center items-center gap-6 mt-10">
+      <a href="customer.html"
+         class="hover-link bg-blue-100 text-blue-700 font-semibold text-lg flex items-center gap-2 px-4 py-2 rounded-md shadow-sm">
+        ← Back to Customer Form
+      </a>
+      <a href="dashboard.html"
+         class="hover-link bg-blue-100 text-blue-700 font-semibold text-lg flex items-center gap-2 px-4 py-2 rounded-md shadow-sm">
+        🏠 Go to Dashboard
+      </a>
+    </div>
+  </div>
+
+  <script>
+    const recordsTable = document.getElementById("recordsTable");
+    let customers = JSON.parse(localStorage.getItem("customers") || "[]");
+
+    function saveToLocal() {
+      localStorage.setItem("customers", JSON.stringify(customers));
+    }
+
+    function loadTable() {
+      recordsTable.innerHTML = "";
+
+      if (customers.length === 0) {
+        recordsTable.innerHTML = `<tr><td colspan="6" class="p-4 text-center text-gray-500">No customer records found.</td></tr>`;
+        return;
+      }
+
+      customers.forEach((customer, index) => {
+        const row = document.createElement("tr");
+        row.classList.add("hover:bg-green-50");
+        row.innerHTML = `
+          <td class="p-4 border-b font-semibold">${index + 1}</td>
+          <td class="p-4 border-b"><input class="editable-input w-full bg-transparent outline-none" value="${customer.name}" disabled /></td>
+          <td class="p-4 border-b"><input class="editable-input w-full bg-transparent outline-none" value="${customer.email}" disabled /></td>
+          <td class="p-4 border-b"><input class="editable-input w-full bg-transparent outline-none" value="${customer.phone}" disabled /></td>
+          <td class="p-4 border-b"><input class="editable-input w-full bg-transparent outline-none" value="${customer.address || ''}" disabled /></td>
+          <td class="p-4 border-b text-center space-x-2">
+            <button class="editBtn action-btn bg-yellow-400 text-white px-4 py-1 rounded-md hover:bg-yellow-500 hover:shadow-md">Edit</button>
+            <button class="deleteBtn action-btn bg-red-500 text-white px-4 py-1 rounded-md hover:bg-red-600 hover:shadow-md">Delete</button>
+          </td>
+        `;
+        recordsTable.appendChild(row);
+      });
+
+      addRowEventListeners();
+    }
+
+    function addRowEventListeners() {
+      document.querySelectorAll(".editBtn").forEach((btn, index) => {
+        btn.addEventListener("click", () => {
+          const row = btn.closest("tr");
+          const inputs = row.querySelectorAll("input");
+          const isEditing = btn.textContent === "Save";
+
+          if (isEditing) {
+            const updatedCustomer = {
+              name: inputs[0].value.trim(),
+              email: inputs[1].value.trim(),
+              phone: inputs[2].value.trim(),
+              address: inputs[3].value.trim()
+            };
+            customers[index] = updatedCustomer;
+            saveToLocal();
+            btn.textContent = "Edit";
+            inputs.forEach(input => input.disabled = true);
+            row.classList.remove("bg-yellow-100");
+          } else {
+            btn.textContent = "Save";
+            inputs.forEach(input => input.disabled = false);
+            inputs[0].focus();
+            row.classList.add("bg-yellow-100");
+          }
+        });
+      });
+
+      document.querySelectorAll(".deleteBtn").forEach((btn, index) => {
+        btn.addEventListener("click", () => {
+          if (confirm("Are you sure you want to delete this customer?")) {
+            customers.splice(index, 1);
+            saveToLocal();
+            loadTable();
+          }
+        });
+      });
+    }
+
+    loadTable();
+  </script>
+</body>
+</html>

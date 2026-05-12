@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Purchase Record</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(to right, #e0f7f1, #c4fff5);
+      padding: 30px;
+    }
+
+    h1 {
+      text-align: center;
+      color: #047857;
+      font-size: 2.3rem;
+      margin-bottom: 30px;
+      text-shadow: 1px 1px 2px #91f1c4;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: white;
+      border-radius: 10px;
+      overflow: hidden;
+      box-shadow: 0 5px 20px rgba(0,0,0,0.15);
+    }
+
+    th, td {
+      padding: 14px;
+      border-bottom: 1px solid #ddd;
+      text-align: center;
+      font-size: 1rem;
+    }
+
+    th {
+      background: #10b981;
+      color: white;
+      font-size: 1.1rem;
+      text-transform: uppercase;
+    }
+
+    tr:hover {
+      background-color: #f0fdfa;
+    }
+
+    .action-buttons {
+      display: flex;
+      justify-content: center;
+      gap: 5px;
+      flex-wrap: wrap;
+    }
+
+    button {
+      padding: 6px 10px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 600;
+      color: white;
+    }
+
+    .view-btn { background-color: #10b981; }
+    .update-btn { background-color: #3b82f6; }
+    .delete-btn { background-color: #ef4444; }
+    .save-btn { background-color: #2563eb; }
+    .cancel-btn { background-color: #9ca3af; }
+
+    .view-btn:hover { background-color: #059669; }
+    .update-btn:hover { background-color: #2563eb; }
+    .delete-btn:hover { background-color: #dc2626; }
+    .save-btn:hover { background-color: #1d4ed8; }
+    .cancel-btn:hover { background-color: #6b7280; }
+
+    input[type="text"], input[type="number"] {
+      width: 100%;
+      padding: 6px;
+      font-size: 1rem;
+    }
+
+    .no-records {
+      text-align: center;
+      margin-top: 20px;
+      font-size: 1.1rem;
+      color: #6b7280;
+    }
+
+    footer {
+      margin-top: 40px;
+      text-align: center;
+    }
+
+    .footer-btn {
+      margin: 10px;
+      padding: 10px 18px;
+      font-size: 1rem;
+      font-weight: bold;
+      border: none;
+      border-radius: 8px;
+      color: white;
+      cursor: pointer;
+      transition: background-color 0.3s ease, transform 0.2s ease;
+    }
+
+    .footer-btn:hover {
+      opacity: 0.9;
+      transform: scale(1.05);
+    }
+
+    .back-btn { background-color: #10b981; }
+    .return-btn { background-color: #3b82f6; }
+    .dashboard-btn { background-color: #ef4444; }
+
+    /* Modal styles */
+    #invoiceModal {
+      display: none;
+      position: fixed;
+      z-index: 1000;
+      left: 0; top: 0;
+      width: 100%; height: 100%;
+      overflow: auto;
+      background-color: rgba(0,0,0,0.5);
+      padding-top: 60px;
+    }
+
+    #invoiceContent {
+      background: white;
+      margin: auto;
+      padding: 20px 30px;
+      border-radius: 10px;
+      width: 400px;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      color: #047857;
+      position: relative;
+    }
+
+    #invoiceContent h2 {
+      text-align: center;
+      margin-bottom: 20px;
+      font-weight: 700;
+      font-size: 1.8rem;
+    }
+
+    #invoiceContent p {
+      margin: 6px 0;
+      font-size: 1rem;
+    }
+
+    #invoiceContent .invoice-row {
+      display: flex;
+      justify-content: space-between;
+      border-bottom: 1px solid #ddd;
+      padding: 6px 0;
+    }
+
+    #invoiceContent .invoice-total {
+      font-weight: 700;
+      font-size: 1.2rem;
+      margin-top: 12px;
+      border-top: 2px solid #10b981;
+      padding-top: 8px;
+      color: #059669;
+    }
+
+    #invoiceModal .modal-footer {
+      margin-top: 20px;
+      text-align: center;
+    }
+
+    #invoiceModal button {
+      padding: 10px 20px;
+      margin: 0 10px;
+      font-weight: 700;
+      border-radius: 6px;
+      border: none;
+      cursor: pointer;
+      font-size: 1rem;
+    }
+
+    #printInvoiceBtn {
+      background-color: #10b981;
+      color: white;
+    }
+
+    #printInvoiceBtn:hover {
+      background-color: #059669;
+    }
+
+    #closeModalBtn {
+      background-color: #ef4444;
+      color: white;
+    }
+
+    #closeModalBtn:hover {
+      background-color: #dc2626;
+    }
+
+    /* Print only modal content and hide buttons */
+    @media print {
+      body * {
+        visibility: hidden;
+      }
+      #invoiceContent, #invoiceContent * {
+        visibility: visible;
+      }
+      #invoiceContent {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+        box-shadow: none;
+        border-radius: 0;
+        margin: 0;
+        padding: 0;
+      }
+      #printInvoiceBtn,
+      #closeModalBtn {
+        display: none !important;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<h1><i class="fas fa-file-invoice-dollar"></i> Purchase Records</h1>
+
+<table id="recordTable">
+  <thead>
+    <tr>
+      <th>ID</th>
+      <th>Invoice No</th>
+      <th>Supplier</th>
+      <th>Product</th>
+      <th>Brand</th>
+      <th>Qty</th>
+      <th>Cost</th>
+      <th>Total</th>
+      <th>Date</th>
+      <th>Actions</th>
+    </tr>
+  </thead>
+  <tbody></tbody>
+</table>
+
+<div class="no-records" id="noData" style="display: none;">
+  <p><i class="fas fa-box-open"></i> No purchase entries available.</p>
+</div>
+
+<footer>
+  <button onclick="location.href='purchase.html'" class="footer-btn back-btn">
+    <i class="fas fa-arrow-left"></i> Back to Purchase Entry
+  </button>
+  <button onclick="location.href='purchase return.html'" class="footer-btn return-btn">
+    <i class="fas fa-undo-alt"></i> Purchase Return
+  </button>
+  <button onclick="location.href='dashboard.html'" class="footer-btn dashboard-btn">
+    <i class="fas fa-home"></i> Go to Dashboard
+  </button>
+</footer>
+
+<!-- Invoice Modal -->
+<div id="invoiceModal">
+  <div id="invoiceContent">
+    <h2>🧾 Purchase Invoice</h2>
+    <div id="invoiceDetails">
+      <!-- Details will be inserted here by JS -->
+    </div>
+    <div class="modal-footer">
+      <button id="printInvoiceBtn">🖨️ Print</button>
+      <button id="closeModalBtn">✖ Close</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  const tableBody = document.querySelector('#recordTable tbody');
+  const noDataMsg = document.getElementById('noData');
+  const invoiceModal = document.getElementById('invoiceModal');
+  const invoiceDetails = document.getElementById('invoiceDetails');
+  const printBtn = document.getElementById('printInvoiceBtn');
+  const closeModalBtn = document.getElementById('closeModalBtn');
+
+  let purchaseData = JSON.parse(localStorage.getItem('purchaseEntries')) || [];
+
+  function loadTable() {
+    tableBody.innerHTML = '';
+    if (purchaseData.length === 0) {
+      noDataMsg.style.display = 'block';
+      return;
+    } else {
+      noDataMsg.style.display = 'none';
+    }
+
+    purchaseData.forEach((entry, index) => {
+      const row = document.createElement('tr');
+
+      row.innerHTML = `
+        <td>${index + 1}</td>
+        <td>${entry.invoiceNumber}</td>
+        <td>${entry.supplierName}</td>
+        <td>${entry.productName}</td>
+        <td>${entry.brandName}</td>
+        <td>${entry.quantity}</td>
+        <td>$${entry.cost.toFixed(2)}</td>
+        <td>$${(entry.quantity * entry.cost).toFixed(2)}</td>
+        <td>${entry.date}</td>
+        <td class="action-buttons">
+          <button class="view-btn" onclick="viewInvoice(${index})">👁️ View</button>
+          <button class="update-btn" onclick="editRow(${index})">✏️ Update</button>
+          <button class="delete-btn" onclick="deleteEntry(${index})">🗑️ Delete</button>
+        </td>
+      `;
+      tableBody.appendChild(row);
+    });
+  }
+
+  function deleteEntry(index) {
+    if (confirm('Are you sure you want to delete this entry?')) {
+      purchaseData.splice(index, 1);
+      localStorage.setItem('purchaseEntries', JSON.stringify(purchaseData));
+      loadTable();
+    }
+  }
+
+  function editRow(index) {
+    const entry = purchaseData[index];
+    const row = tableBody.children[index];
+
+    row.innerHTML = `
+      <td>${index + 1}</td>
+      <td><input type="text" value="${entry.invoiceNumber}"></td>
+      <td><input type="text" value="${entry.supplierName}"></td>
+      <td><input type="text" value="${entry.productName}"></td>
+      <td><input type="text" value="${entry.brandName}"></td>
+      <td><input type="number" value="${entry.quantity}"></td>
+      <td><input type="number" step="0.01" value="${entry.cost}"></td>
+      <td>$${(entry.quantity * entry.cost).toFixed(2)}</td>
+      <td><input type="text" value="${entry.date}"></td>
+      <td class="action-buttons">
+        <button class="save-btn" onclick="saveRow(${index})">💾 Save</button>
+        <button class="cancel-btn" onclick="loadTable()">❌ Cancel</button>
+      </td>
+    `;
+  }
+
+  function saveRow(index) {
+    const row = tableBody.children[index];
+    const inputs = row.querySelectorAll('input');
+
+    const updatedEntry = {
+      invoiceNumber: inputs[0].value.trim(),
+      supplierName: inputs[1].value.trim(),
+      productName: inputs[2].value.trim(),
+      brandName: inputs[3].value.trim(),
+      quantity: parseInt(inputs[4].value),
+      cost: parseFloat(inputs[5].value),
+      date: inputs[6].value.trim()
+    };
+
+    if (updatedEntry.invoiceNumber && updatedEntry.quantity > 0 && updatedEntry.cost > 0) {
+      purchaseData[index] = updatedEntry;
+      localStorage.setItem('purchaseEntries', JSON.stringify(purchaseData));
+      loadTable();
+    } else {
+      alert("Invalid input. Please check your data.");
+    }
+  }
+
+  function viewInvoice(index) {
+    const entry = purchaseData[index];
+    invoiceDetails.innerHTML = `
+      <div class="invoice-row"><strong>Invoice Number:</strong> <span>${entry.invoiceNumber}</span></div>
+      <div class="invoice-row"><strong>Supplier Name:</strong> <span>${entry.supplierName}</span></div>
+      <div class="invoice-row"><strong>Product Name:</strong> <span>${entry.productName}</span></div>
+      <div class="invoice-row"><strong>Brand Name:</strong> <span>${entry.brandName}</span></div>
+      <div class="invoice-row"><strong>Quantity:</strong> <span>${entry.quantity}</span></div>
+      <div class="invoice-row"><strong>Cost per Unit:</strong> <span>$${entry.cost.toFixed(2)}</span></div>
+      <div class="invoice-row invoice-total"><strong>Total:</strong> <span>$${(entry.quantity * entry.cost).toFixed(2)}</span></div>
+      <div class="invoice-row"><strong>Date of Purchase:</strong> <span>${entry.date}</span></div>
+    `;
+    invoiceModal.style.display = 'block';
+  }
+
+  printBtn.addEventListener('click', () => {
+    window.print();
+  });
+
+  closeModalBtn.addEventListener('click', () => {
+    invoiceModal.style.display = 'none';
+  });
+
+  // Close modal if clicked outside content area
+  window.onclick = function(event) {
+    if (event.target === invoiceModal) {
+      invoiceModal.style.display = 'none';
+    }
+  };
+
+  loadTable();
+</script>
+
+</body>
+</html>

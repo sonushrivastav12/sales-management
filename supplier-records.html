@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Supplier Records</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    /* Custom button styles for uniqueness and polish */
+    .editBtn {
+      background: linear-gradient(135deg, #facc15, #eab308); /* amber gradient */
+      box-shadow: 0 4px 6px rgba(234,179,8,0.4);
+      transition: background 0.3s ease, transform 0.2s ease;
+      font-weight: 600;
+    }
+    .editBtn:hover {
+      background: linear-gradient(135deg, #eab308, #ca8a04);
+      transform: scale(1.05);
+      box-shadow: 0 6px 10px rgba(202,138,4,0.6);
+    }
+
+    .deleteBtn {
+      background: linear-gradient(135deg, #ef4444, #b91c1c); /* red gradient */
+      box-shadow: 0 4px 6px rgba(185,28,28,0.4);
+      transition: background 0.3s ease, transform 0.2s ease;
+      font-weight: 600;
+    }
+    .deleteBtn:hover {
+      background: linear-gradient(135deg, #b91c1c, #7f1d1d);
+      transform: scale(1.05);
+      box-shadow: 0 6px 10px rgba(127,29,29,0.6);
+    }
+
+    /* Smooth input focus effect when editing */
+    .editable-input:focus {
+      outline: 2px solid #9333ea; /* purple focus */
+      background-color: #faf5ff;
+      transition: background-color 0.3s ease, outline 0.3s ease;
+    }
+
+    /* Navigation buttons below the table */
+    .nav-button {
+      padding: 0.75rem 1.5rem;
+      font-weight: 600;
+      border-radius: 0.5rem; /* rounded-lg */
+      color: white;
+      background: linear-gradient(135deg, #7c3aed, #9333ea); /* purple gradient */
+      box-shadow: 0 4px 8px rgba(147, 51, 234, 0.5);
+      transition: background 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
+      text-decoration: none;
+      user-select: none;
+      cursor: pointer;
+      display: inline-block;
+    }
+    .nav-button:hover {
+      background: linear-gradient(135deg, #9333ea, #7c3aed);
+      transform: scale(1.05);
+      box-shadow: 0 6px 12px rgba(147, 51, 234, 0.7);
+      text-decoration: none;
+    }
+  </style>
+</head>
+<body class="bg-gradient-to-br from-purple-200 to-indigo-200 min-h-screen flex flex-col items-center justify-start p-6">
+
+  <div class="bg-white shadow-2xl rounded-3xl p-8 w-full max-w-6xl mt-6">
+    <h1 class="text-3xl font-bold text-center text-purple-700 mb-6">Supplier Records</h1>
+    
+    <div class="overflow-x-auto">
+      <table class="min-w-full table-auto text-left border-collapse">
+        <thead>
+          <tr class="bg-purple-100 text-purple-800">
+            <th class="p-4 border-b">ID</th>
+            <th class="p-4 border-b">Name</th>
+            <th class="p-4 border-b">Company</th>
+            <th class="p-4 border-b">Email</th>
+            <th class="p-4 border-b">Phone</th>
+            <th class="p-4 border-b text-center">Actions</th>
+          </tr>
+        </thead>
+        <tbody id="recordsTable" class="bg-white text-gray-800">
+          <!-- Supplier rows will be added here -->
+        </tbody>
+      </table>
+    </div>
+
+    <div class="flex justify-center gap-x-8 mt-6">
+      <a href="supplier.html" class="nav-button">← Back to Supplier Form</a>
+      <a href="dashboard.html" class="nav-button">🏠 Go to Dashboard</a>
+    </div>
+  </div>
+
+  <script>
+    const recordsTable = document.getElementById("recordsTable");
+    let suppliers = JSON.parse(localStorage.getItem("suppliers") || "[]");
+
+    function saveToLocal() {
+      localStorage.setItem("suppliers", JSON.stringify(suppliers));
+    }
+
+    function loadTable() {
+      recordsTable.innerHTML = "";
+
+      if (suppliers.length === 0) {
+        recordsTable.innerHTML = `<tr><td colspan="6" class="p-4 text-center text-gray-500">No supplier records found.</td></tr>`;
+        return;
+      }
+
+      suppliers.forEach((supplier, index) => {
+        const row = document.createElement("tr");
+        row.innerHTML = `
+          <td class="p-4 border-b">${index + 1}</td>
+          <td class="p-4 border-b"><input class="editable-input w-full bg-transparent" value="${supplier.name}" disabled /></td>
+          <td class="p-4 border-b"><input class="editable-input w-full bg-transparent" value="${supplier.company}" disabled /></td>
+          <td class="p-4 border-b"><input class="editable-input w-full bg-transparent" value="${supplier.email}" disabled /></td>
+          <td class="p-4 border-b"><input class="editable-input w-full bg-transparent" value="${supplier.phone}" disabled /></td>
+          <td class="p-4 border-b text-center">
+            <button class="editBtn px-4 py-2 rounded-md mr-2 cursor-pointer select-none">Edit</button>
+            <button class="deleteBtn px-4 py-2 rounded-md cursor-pointer select-none">Delete</button>
+          </td>
+        `;
+        recordsTable.appendChild(row);
+      });
+
+      addRowEventListeners();
+    }
+
+    function addRowEventListeners() {
+      document.querySelectorAll(".editBtn").forEach((btn, index) => {
+        btn.addEventListener("click", () => {
+          const inputs = btn.closest("tr").querySelectorAll("input");
+          const isEditing = btn.textContent === "Save";
+
+          if (isEditing) {
+            const updatedSupplier = {
+              ...suppliers[index], 
+              name: inputs[0].value,
+              company: inputs[1].value,
+              email: inputs[2].value,
+              phone: inputs[3].value
+            };
+            suppliers[index] = updatedSupplier;
+            saveToLocal();
+            btn.textContent = "Edit";
+            inputs.forEach(input => input.disabled = true);
+          } else {
+            btn.textContent = "Save";
+            inputs.forEach(input => input.disabled = false);
+            inputs[0].focus();
+          }
+        });
+      });
+
+      document.querySelectorAll(".deleteBtn").forEach((btn, index) => {
+        btn.addEventListener("click", () => {
+          if (confirm("Are you sure you want to delete this supplier?")) {
+            suppliers.splice(index, 1);
+            saveToLocal();
+            loadTable();
+          }
+        });
+      });
+    }
+
+    loadTable();
+  </script>
+</body>
+</html>

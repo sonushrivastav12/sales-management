@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Sales Return Entry</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: linear-gradient(135deg, #fff5f5, #ffeaea);
+      margin: 0;
+      padding: 0;
+    }
+    .container {
+      max-width: 720px;
+      margin: 50px auto;
+      background: #ffffff;
+      padding: 35px;
+      border-radius: 20px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+    }
+    h2 {
+      text-align: center;
+      color: #c0392b;
+      margin-bottom: 30px;
+      font-size: 30px;
+      position: relative;
+    }
+    h2::before {
+      content: "↩️ ";
+      margin-right: 8px;
+      font-size: 30px;
+    }
+    label {
+      display: block;
+      margin: 18px 0 6px;
+      color: #34495e;
+      font-weight: 500;
+    }
+    input {
+      width: 100%;
+      padding: 14px;
+      border-radius: 10px;
+      border: 1px solid #ccc;
+      font-size: 16px;
+      box-sizing: border-box;
+      transition: all 0.2s ease-in-out;
+    }
+    input:focus {
+      border-color: #e74c3c;
+      outline: none;
+      box-shadow: 0 0 5px rgba(231, 76, 60, 0.2);
+    }
+    .btn-group {
+      margin-top: 28px;
+      text-align: center;
+    }
+    .btn {
+      padding: 20px 90px;
+      background-color: #e74c3c;
+      color: white;
+      border: none;
+      border-radius: 14px;
+      font-size: 18px;
+      cursor: pointer;
+      transition: background 0.3s, transform 0.2s;
+    }
+    .btn:hover {
+      background-color: #c0392b;
+      transform: translateY(-2px);
+    }
+    .nav-buttons {
+      display: flex;
+      justify-content: center;
+      gap: 25px;
+      margin-top: 35px;
+    }
+    .nav-btn {
+      padding: 14px 80px;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      border-radius: 14px;
+      font-size: 17px;
+      text-decoration: none;
+      text-align: center;
+      transition: background 0.3s ease, transform 0.2s ease;
+    }
+    .nav-btn:hover {
+      background-color: #0056b3;
+      transform: scale(1.05);
+    }
+    .dashboard-btn {
+      background-color: #17a2b8;
+    }
+    .dashboard-btn:hover {
+      background-color: #117a8b;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>Sales Return Entry</h2>
+    <form id="salesReturnForm">
+
+      <label for="returnInvoiceNumber">Invoice Number</label>
+      <input type="text" id="returnInvoiceNumber" placeholder="Enter invoice number" required />
+
+      <label for="returnCustomerName">Customer Name</label>
+      <input type="text" id="returnCustomerName" placeholder="Enter customer name" required />
+
+      <label for="returnProductName">Product Name</label>
+      <input type="text" id="returnProductName" placeholder="Enter product name" required />
+
+      <label for="returnBrand">Brand</label>
+      <input type="text" id="returnBrand" placeholder="Enter brand" required />
+
+      <label for="returnQuantity">Quantity</label>
+      <input type="number" id="returnQuantity" placeholder="Enter quantity" required min="1" />
+
+      <label for="returnAmount">Amount</label>
+      <input type="number" id="returnAmount" placeholder="Enter amount" required min="0" step="0.01" />
+
+      <label for="returnDate">Return Date</label>
+      <input type="date" id="returnDate" required />
+
+      <label for="reason">Reason</label>
+      <input type="text" id="reason" placeholder="Write a reason for return" required>
+
+      <div class="btn-group">
+        <button type="submit" class="btn">Submit</button>
+      </div>
+    </form>
+
+    <div class="nav-buttons">
+      <a href="sales return-record.html" class="nav-btn">📄 View Records</a>
+      <a href="dashboard.html" class="nav-btn dashboard-btn">🏠 Go to Dashboard</a>
+    </div>
+  </div>
+
+  <script>
+    document.getElementById("salesReturnForm").addEventListener("submit", function(e) {
+      e.preventDefault();
+
+      const returnData = {
+        id: Date.now(), // Unique ID
+        invoiceNumber: document.getElementById("returnInvoiceNumber").value,
+        customerName: document.getElementById("returnCustomerName").value,
+        productName: document.getElementById("returnProductName").value,
+        brand: document.getElementById("returnBrand").value,
+        quantity: document.getElementById("returnQuantity").value,
+        amount: document.getElementById("returnAmount").value,
+        returnDate: document.getElementById("returnDate").value,
+        reason: document.getElementById("reason").value
+      };
+
+      let salesReturns = JSON.parse(localStorage.getItem("salesReturns")) || [];
+      salesReturns.push(returnData);
+      localStorage.setItem("salesReturns", JSON.stringify(salesReturns));
+
+      alert("✅ Sales return recorded successfully!");
+      document.getElementById("salesReturnForm").reset();
+    });
+  </script>
+</body>
+</html>

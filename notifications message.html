@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Notifications Records</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <style>
+    body {
+      font-family: "Poppins", sans-serif;
+      background: linear-gradient(to right, #667eea, #764ba2);
+      margin: 0;
+      padding: 40px 20px;
+      color: #333;
+      min-height: 100vh;
+    }
+
+    .container {
+      max-width: 1100px;
+      margin: auto;
+      background: #fff;
+      border-radius: 12px;
+      padding: 30px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+    }
+
+    h1 {
+      text-align: center;
+      margin-bottom: 30px;
+      color: #4a00e0;
+      font-weight: 700;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: white;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 5px 20px rgba(102, 126, 234, 0.2);
+    }
+
+    thead {
+      background: #4a00e0;
+      color: white;
+    }
+
+    thead th {
+      padding: 15px 20px;
+      text-align: left;
+      font-weight: 600;
+    }
+
+    tbody td {
+      padding: 15px 20px;
+      border-bottom: 1px solid #ddd;
+      vertical-align: top;
+    }
+
+    tbody tr:hover {
+      background: #f5f7ff;
+    }
+
+    .empty-msg {
+      text-align: center;
+      font-size: 1.2rem;
+      margin-top: 30px;
+      color: #888;
+    }
+
+    .delete-btn {
+      background: #e74c3c;
+      border: none;
+      color: white;
+      padding: 8px 14px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: bold;
+      transition: background-color 0.3s ease;
+    }
+
+    .delete-btn:hover {
+      background: #c0392b;
+    }
+
+    .date-time {
+      font-size: 0.85rem;
+      color: #666;
+      margin-top: 6px;
+      display: block;
+    }
+
+    .back-button {
+      text-align: center;
+      margin-top: 30px;
+    }
+
+    .back-link {
+      display: inline-block;
+      padding: 12px 24px;
+      background-color: #4a00e0;
+      color: white;
+      border-radius: 8px;
+      text-decoration: none;
+      font-weight: bold;
+      transition: background-color 0.3s ease, transform 0.2s ease;
+    }
+
+    .back-link i {
+      margin-right: 8px;
+    }
+
+    .back-link:hover {
+      background-color: #3a00b0;
+      transform: scale(1.05);
+    }
+
+    @media (max-width: 700px) {
+      table, thead, tbody, th, td, tr {
+        display: block;
+      }
+      thead tr {
+        display: none;
+      }
+      tbody tr {
+        margin-bottom: 20px;
+        background: white;
+        border-radius: 12px;
+        box-shadow: 0 10px 20px rgba(102, 126, 234, 0.15);
+        padding: 20px;
+      }
+      tbody td {
+        padding: 10px 0;
+        border-bottom: none;
+        position: relative;
+        padding-left: 50%;
+      }
+      tbody td::before {
+        position: absolute;
+        top: 10px;
+        left: 20px;
+        width: 40%;
+        white-space: nowrap;
+        font-weight: 700;
+        color: #4a00e0;
+      }
+      tbody td:nth-of-type(1)::before { content: "Name"; }
+      tbody td:nth-of-type(2)::before { content: "Email"; }
+      tbody td:nth-of-type(3)::before { content: "Message"; }
+      tbody td:nth-of-type(4)::before { content: "Submitted At"; }
+      tbody td:nth-of-type(5)::before { content: "Action"; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Notifications Records</h1>
+    <table id="messages-table">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Email</th>
+          <th>Message</th>
+          <th>Submitted At</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- Messages will be inserted here dynamically -->
+      </tbody>
+    </table>
+
+    <p class="empty-msg" id="empty-msg" style="display:none;">
+      No messages found.
+    </p>
+
+    <div class="back-button">
+      <a href="dashboard.html" class="back-link">
+        <i class="fas fa-arrow-left"></i> Back to Dashboard
+      </a>
+    </div>
+  </div>
+
+  <script>
+    const tableBody = document.querySelector("#messages-table tbody");
+    const emptyMsg = document.getElementById("empty-msg");
+
+    function loadMessages() {
+      const contacts = JSON.parse(localStorage.getItem("contacts")) || [];
+      tableBody.innerHTML = "";
+
+      if (contacts.length === 0) {
+        emptyMsg.style.display = "block";
+        return;
+      } else {
+        emptyMsg.style.display = "none";
+      }
+
+      contacts.forEach((contact, index) => {
+        const tr = document.createElement("tr");
+
+        // Name
+        const tdName = document.createElement("td");
+        tdName.textContent = contact.name;
+        tr.appendChild(tdName);
+
+        // Email
+        const tdEmail = document.createElement("td");
+        tdEmail.textContent = contact.email;
+        tr.appendChild(tdEmail);
+
+        // Message
+        const tdMessage = document.createElement("td");
+        let msgText = contact.message;
+        if (msgText.length > 80) {
+          msgText = msgText.substring(0, 77) + "...";
+        }
+        tdMessage.textContent = msgText;
+        tr.appendChild(tdMessage);
+
+        // Submitted At
+        const tdDate = document.createElement("td");
+        const dateObj = new Date(contact.submittedAt);
+        tdDate.innerHTML =
+          dateObj.toLocaleDateString() +
+          "<span class='date-time'>" +
+          dateObj.toLocaleTimeString() +
+          "</span>";
+        tr.appendChild(tdDate);
+
+        // Action
+        const tdAction = document.createElement("td");
+        const delBtn = document.createElement("button");
+        delBtn.textContent = "Delete";
+        delBtn.className = "delete-btn";
+        delBtn.addEventListener("click", () => {
+          if (confirm(`Delete message from "${contact.name}"?`)) {
+            deleteMessage(index);
+          }
+        });
+        tdAction.appendChild(delBtn);
+        tr.appendChild(tdAction);
+
+        tableBody.appendChild(tr);
+      });
+    }
+
+    function deleteMessage(idx) {
+      let contacts = JSON.parse(localStorage.getItem("contacts")) || [];
+      contacts.splice(idx, 1);
+      localStorage.setItem("contacts", JSON.stringify(contacts));
+      loadMessages();
+    }
+
+    window.onload = loadMessages;
+  </script>
+</body>
+</html>

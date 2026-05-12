@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Contact Us</title>
+  <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+  />
+  <style>
+    /* Reset and base */
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: "Poppins", sans-serif;
+    }
+    body {
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      color: #333;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 40px 20px;
+      font-size: 16px;
+      line-height: 1.6;
+      padding-top: 70px;
+    }
+    a {
+      text-decoration: none;
+      transition: color 0.3s ease;
+    }
+
+    /* Top Navbar */
+    .top-navbar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      background: #674dd1;
+      padding: 15px 30px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+      z-index: 1000;
+    }
+    .nav-content {
+      display: flex;
+      justify-content: flex-end;
+      gap: 40px;
+    }
+    .top-navbar a {
+      color: white;
+      font-size: 1.2rem;
+      font-weight: 600;
+      padding-bottom: 5px;
+      border-bottom: 2px solid transparent;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.3s ease;
+    }
+    .top-navbar a:hover,
+    .top-navbar a.active {
+      position: relative;
+      color: white; /* keep font color white */
+      border-bottom: none;
+      box-shadow: 0 0 10px 3px #f3c623; /* yellow glow */
+      border-radius: 6px;
+      background-color: rgba(243, 198, 35, 0.15); /* subtle yellow background */
+      padding: 8px 12px;
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 40px;
+      color: white;
+      max-width: 600px;
+    }
+    header h1 {
+      font-size: 3rem;
+      margin-bottom: 10px;
+      text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.3);
+    }
+    header p {
+      font-size: 1.1rem;
+      opacity: 0.85;
+    }
+
+    .contact-container {
+      background: white;
+      border-radius: 20px;
+      max-width: 900px;
+      width: 100%;
+      display: flex;
+      gap: 40px;
+      box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
+      overflow: hidden;
+      flex-wrap: wrap;
+    }
+
+    .contact-form {
+      flex: 1 1 400px;
+      padding: 40px 30px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+    .contact-form h2 {
+      color: #667eea;
+      margin-bottom: 30px;
+      font-size: 2rem;
+      font-weight: 600;
+      letter-spacing: 1px;
+    }
+    form {
+      width: 100%;
+    }
+    .input-group {
+      margin-bottom: 25px;
+      display: flex;
+      flex-direction: column;
+    }
+    label {
+      margin-bottom: 8px;
+      font-weight: 600;
+      color: #555;
+    }
+    input[type="text"],
+    input[type="email"],
+    textarea {
+      padding: 14px 18px;
+      border-radius: 10px;
+      border: 2px solid #ddd;
+      font-size: 1rem;
+      transition: border-color 0.3s ease;
+      resize: vertical;
+    }
+    input[type="text"]:focus,
+    input[type="email"]:focus,
+    textarea:focus {
+      border-color: #667eea;
+      outline: none;
+      box-shadow: 0 0 8px #667eeaaa;
+    }
+    textarea {
+      min-height: 130px;
+    }
+    button[type="submit"] {
+      background: #667eea;
+      color: white;
+      padding: 14px 0;
+      width: 100%;
+      font-size: 1.2rem;
+      font-weight: 700;
+      border: none;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: background 0.3s ease;
+      box-shadow: 0 6px 12px rgba(102, 126, 234, 0.5);
+    }
+    button[type="submit"]:hover {
+      background: #764ba2;
+      box-shadow: 0 8px 16px rgba(118, 75, 162, 0.6);
+    }
+
+    .contact-info {
+      flex: 1 1 350px;
+      background: #f7f9ff;
+      padding: 50px 30px;
+      border-radius: 0 20px 20px 0;
+      box-shadow: inset 8px 0 20px -12px #667eea88;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      color: #444;
+    }
+    .contact-info h2 {
+      font-size: 2rem;
+      margin-bottom: 30px;
+      color: #764ba2;
+      font-weight: 600;
+    }
+    .contact-info ul {
+      list-style: none;
+      font-size: 1.1rem;
+      line-height: 2;
+    }
+    .contact-info li {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      margin-bottom: 20px;
+    }
+    .contact-info i {
+      font-size: 1.6rem;
+      color: #667eea;
+      min-width: 30px;
+      text-align: center;
+    }
+    .contact-info a {
+      color: #333;
+      font-weight: 600;
+    }
+    .contact-info a:hover {
+      color: #667eea;
+    }
+
+    .map-section {
+      margin-top: 60px;
+      width: 100%;
+      max-width: 900px;
+      text-align: center;
+      color: white;
+    }
+    .map-section h2 {
+      margin-bottom: 20px;
+      font-size: 2.5rem;
+      text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.3);
+    }
+    .map-container {
+      border-radius: 20px;
+      overflow: hidden;
+      box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3);
+      border: 5px solid white;
+    }
+    iframe {
+      width: 100%;
+      height: 400px;
+      border: none;
+      display: block;
+    }
+
+    /* Follow Us Section */
+    .follow-us {
+      margin: 40px auto 20px;
+      max-width: 900px;
+      width: 100%;
+      text-align: center;
+      color: white;
+    }
+    .follow-us h2 {
+      font-size: 2rem;
+      margin-bottom: 20px;
+      text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.3);
+    }
+    .social-icons {
+      display: flex;
+      justify-content: center;
+      gap: 30px;
+    }
+    .social-icons a {
+      font-size: 2.5rem;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+      transition: all 0.3s ease;
+      color: white;
+      background: transparent;
+    }
+    /* Instagram gradient background */
+    .social-icons a[href*="instagram"] {
+      background: radial-gradient(
+        circle at 30% 107%,
+        #fdf497 0%,
+        #fdf497 5%,
+        #fd5949 45%,
+        #d6249f 60%,
+        #285aeb 90%
+      );
+      color: white;
+      box-shadow: 0 4px 15px #d6249f99;
+    }
+    /* Facebook blue background */
+    .social-icons a[href*="facebook"] {
+      background: #1877f2;
+      color: white;
+      box-shadow: 0 4px 15px #1877f299;
+    }
+    /* WhatsApp green background */
+    .social-icons a[href*="wa.me"] {
+      background: #25d366;
+      color: white;
+      box-shadow: 0 4px 15px #25d36699;
+    }
+    /* Hover effect */
+    .social-icons a:hover {
+      filter: brightness(1.2);
+      box-shadow: 0 6px 18px currentColor;
+    }
+
+    footer {
+      margin-top: 50px;
+      padding: 15px 20px;
+      width: 100%;
+      max-width: 900px;
+      text-align: center;
+      color: #ddd;
+      font-size: 0.9rem;
+    }
+    footer a {
+      color: #f3c623;
+      font-weight: 600;
+    }
+    footer a:hover {
+      color: white;
+    }
+
+    @media (max-width: 768px) {
+      .contact-container {
+        flex-direction: column;
+        border-radius: 20px;
+      }
+      .contact-info {
+        border-radius: 0 0 20px 20px;
+        box-shadow: none;
+        padding: 40px 30px 60px;
+      }
+      .map-section h2 {
+        font-size: 2rem;
+      }
+      header h1 {
+        font-size: 2.5rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Top Navbar -->
+  <nav class="top-navbar">
+    <div class="nav-content">
+      <a href="home page.html"
+        ><i class="fas fa-home"></i> Home</a
+      >
+      <a href="about.html"
+        ><i class="fas fa-info-circle"></i> About us</a
+      >
+      <a href="contact us.html" class="active"
+        ><i class="fas fa-envelope"></i> Contact us</a
+      >
+    </div>
+  </nav>
+
+  <header>
+    <h1>Contact Us</h1>
+    <p>
+      We're here to help! Feel free to reach out to us with any inquiries or
+      questions.
+    </p>
+  </header>
+
+  <section class="contact-container">
+    <div class="contact-form">
+      <h2>Get In Touch</h2>
+      <form action="#" method="POST" novalidate>
+        <div class="input-group">
+          <label for="name">Your Name</label>
+          <input
+            type="text"
+            id="name"
+            name="name"
+            placeholder="John Doe"
+            required
+          />
+        </div>
+        <div class="input-group">
+          <label for="email">Your Email</label>
+          <input
+            type="email"
+            id="email"
+            name="email"
+            placeholder="example@domain.com"
+            required
+          />
+        </div>
+        <div class="input-group">
+          <label for="message">Your Message</label>
+          <textarea
+            id="message"
+            name="message"
+            rows="5"
+            placeholder="Write your message here..."
+            required
+          ></textarea>
+        </div>
+        <button type="submit">Submit</button>
+      </form>
+    </div>
+
+    <div class="contact-info">
+      <h2>Our Contact Information</h2>
+      <ul>
+        <li>
+          <i class="fas fa-phone-alt"></i>
+          <a href="tel:+918532098306">+91 85320 98306</a>
+        </li>
+        <li>
+          <i class="fas fa-envelope"></i>
+          <a href="mailto:support@example.com">sonu@gmail.com</a>
+        </li>
+        <li>
+          <i class="fas fa-map-marker-alt"></i>
+          Bewar, Mainpuri uttar pradesh, India
+        </li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="map-section">
+    <h2>Find Us Here</h2>
+    <div class="map-container">
+      <iframe
+        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3768.858599949357!2d72.87742611483092!3d19.076090987065507!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3be7ce52a650b10f%3A0x30698f8c5a853c0b!2sMumbai%2C%20Maharashtra%2C%20India!5e0!3m2!1sen!2sus!4v1685091343452!5m2!1sen!2sus"
+        allowfullscreen=""
+        loading="lazy"
+        referrerpolicy="no-referrer-when-downgrade"
+      ></iframe>
+    </div>
+  </section>
+
+  <section class="follow-us">
+    <h2>Follow Us</h2>
+    <div class="social-icons">
+      <a
+        href="https://www.instagram.com/"
+        target="_blank"
+        aria-label="Instagram"
+        ><i class="fab fa-instagram"></i
+      ></a>
+      <a
+        href="https://www.facebook.com/"
+        target="_blank"
+        aria-label="Facebook"
+        ><i class="fab fa-facebook-f"></i
+      ></a>
+      <a
+        href="https://wa.me/918532098306"
+        target="_blank"
+        aria-label="WhatsApp"
+        ><i class="fab fa-whatsapp"></i
+      ></a>
+    </div>
+  </section>
+
+  <footer>
+    &copy; 2025 Your Company. Made with
+    <span style="color: #f44336;">&#10084;</span> by You.
+  </footer>
+
+  <script>
+    const form = document.querySelector("form");
+
+    form.addEventListener("submit", function (e) {
+      e.preventDefault(); // stop form reload
+
+      const name = form.name.value.trim();
+      const email = form.email.value.trim();
+      const message = form.message.value.trim();
+
+      if (!name || !email || !message) {
+        alert("Please fill in all fields.");
+        return;
+      }
+
+      // Simple email regex validation
+      const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailPattern.test(email)) {
+        alert("Please enter a valid email address.");
+        return;
+      }
+
+      // Prepare data object
+      const contactData = {
+        name,
+        email,
+        message,
+        submittedAt: new Date().toISOString(),
+      };
+
+      // Get existing contacts or empty array
+      let contacts = JSON.parse(localStorage.getItem("contacts")) || [];
+
+      // Add new contact
+      contacts.push(contactData);
+
+      // Save to localStorage
+      localStorage.setItem("contacts", JSON.stringify(contacts));
+
+      // Clear form
+      form.reset();
+
+      alert("Thank you for contacting us! We will get back to you soon.");
+    });
+  </script>
+</body>
+</html>

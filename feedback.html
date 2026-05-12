@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Feedback | Sales Management System</title>
+  <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    crossorigin="anonymous"
+    referrerpolicy="no-referrer"
+  />
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: linear-gradient(to right, #4facfe, #00f2fe);
+      margin: 0;
+      padding: 0;
+    }
+
+    .container {
+      background: white;
+      max-width: 600px;
+      margin: 3rem auto;
+      padding: 2rem;
+      border-radius: 12px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+    }
+
+    h1, h2 {
+      color: #333;
+      text-align: center;
+    }
+
+    p {
+      text-align: center;
+      color: #555;
+    }
+
+    form label {
+      display: block;
+      margin-top: 1rem;
+      color: #444;
+      font-weight: bold;
+    }
+
+    input, textarea {
+      width: 100%;
+      padding: 0.75rem;
+      margin-top: 0.5rem;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+    }
+
+    button {
+      display: block;
+      width: 100%;
+      margin-top: 1.5rem;
+      padding: 0.75rem;
+      background-color: #007BFF;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    button:hover {
+      background-color: #0056b3;
+    }
+
+    .stars {
+      margin-top: 0.5rem;
+    }
+
+    .stars span {
+      font-size: 2rem;
+      color: #ccc;
+      cursor: pointer;
+      transition: color 0.3s ease;
+    }
+
+    .stars span.selected,
+    .stars span:hover,
+    .stars span:hover ~ span {
+      color: #ffcc00;
+    }
+
+    #feedbackList {
+      margin-top: 1.5rem;
+      max-height: 300px;
+      overflow-y: auto;
+    }
+
+    .feedback-entry {
+      background: #f9f9f9;
+      border-left: 5px solid #007BFF;
+      padding: 1rem;
+      margin-bottom: 1rem;
+      border-radius: 8px;
+    }
+
+    .back-button {
+      text-align: center;
+      margin-top: 2rem;
+    }
+
+    .back-link {
+      display: inline-block;
+      padding: 10px 20px;
+      background-color: #007BFF;
+      color: white;
+      border-radius: 6px;
+      text-decoration: none;
+      font-weight: bold;
+      transition: background-color 0.3s ease, transform 0.2s ease;
+    }
+
+    .back-link:hover {
+      background-color: #0056b3;
+      transform: scale(1.05);
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Customer Feedback</h1>
+    <p>We value your thoughts! Please leave your feedback below.</p>
+    
+    <form id="feedbackForm">
+      <label for="name">Your Name</label>
+      <input type="text" id="name" required>
+
+      <label for="rating">Rating</label>
+      <div class="stars" id="stars">
+        <span data-value="1">★</span>
+        <span data-value="2">★</span>
+        <span data-value="3">★</span>
+        <span data-value="4">★</span>
+        <span data-value="5">★</span>
+      </div>
+
+      <label for="message">Feedback</label>
+      <textarea id="message" rows="4" required></textarea>
+
+      <button type="submit">Submit Feedback</button>
+    </form>
+
+    <h2>Previous Feedbacks</h2>
+    <div id="feedbackList"></div>
+
+    <div class="back-button">
+      <a href="dashboard.html" class="back-link">
+        <i class="fas fa-arrow-left"></i> Back to Dashboard
+      </a>
+    </div>
+  </div>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const form = document.getElementById("feedbackForm");
+      const feedbackList = document.getElementById("feedbackList");
+      const stars = document.querySelectorAll("#stars span");
+      let selectedRating = 0;
+
+      // Load feedbacks from local storage
+      const loadFeedbacks = () => {
+        feedbackList.innerHTML = "";
+        const feedbacks = JSON.parse(localStorage.getItem("feedbacks")) || [];
+        feedbacks.forEach((fb) => {
+          const entry = document.createElement("div");
+          entry.className = "feedback-entry";
+          entry.innerHTML = `
+            <strong>${fb.name}</strong> - ⭐ ${fb.rating}<br/>
+            <p>${fb.message}</p>
+          `;
+          feedbackList.appendChild(entry);
+        });
+      };
+
+      // Star rating selection
+      stars.forEach((star) => {
+        star.addEventListener("click", () => {
+          selectedRating = parseInt(star.dataset.value);
+          stars.forEach(s => s.classList.remove("selected"));
+          for (let i = 0; i < selectedRating; i++) {
+            stars[i].classList.add("selected");
+          }
+        });
+      });
+
+      // Form submission
+      form.addEventListener("submit", (e) => {
+        e.preventDefault();
+        const name = document.getElementById("name").value.trim();
+        const message = document.getElementById("message").value.trim();
+
+        if (!selectedRating) {
+          alert("Please select a star rating.");
+          return;
+        }
+
+        const feedback = { name, rating: selectedRating, message };
+        const feedbacks = JSON.parse(localStorage.getItem("feedbacks")) || [];
+        feedbacks.unshift(feedback);
+        localStorage.setItem("feedbacks", JSON.stringify(feedbacks));
+
+        form.reset();
+        selectedRating = 0;
+        stars.forEach(s => s.classList.remove("selected"));
+        loadFeedbacks();
+      });
+
+      loadFeedbacks();
+    });
+  </script>
+</body>
+</html>

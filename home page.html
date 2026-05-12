@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Sales Management System</title>
+
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet" />
+  <!-- Font Awesome for Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: #f9fafb;
+      color: #1f2937;
+      line-height: 1.6;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+    a {
+      text-decoration: none;
+      color: inherit;
+    }
+    img {
+      max-width: 100%;
+      display: block;
+    }
+    .container {
+      max-width: 1200px;
+      padding: 0 1.5rem;
+      margin: 0 auto;
+      width: 100%;
+    }
+
+    /* Header */
+    header {
+      background-color: #2563eb;
+      padding: 1rem 0;
+      box-shadow: 0 4px 6px rgb(37 99 235 / 0.3);
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+    }
+    .nav-container {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .logo {
+      font-weight: 700;
+      font-size: 1.8rem;
+      color: #ffffff;
+      user-select: none;
+    }
+    .logo span {
+      color: #fbbf24;
+    }
+    nav ul {
+      list-style: none;
+      display: flex;
+      gap: 1.5rem;
+    }
+    nav ul li a {
+      color: #e0e7ff;
+      font-weight: 500;
+      padding: 0.5rem 0.75rem;
+      border-radius: 5px;
+      transition: background-color 0.3s ease, color 0.3s ease;
+    }
+    nav ul li a i {
+      margin-right: 0.5rem;
+    }
+    nav ul li a:hover,
+    nav ul li a.active {
+      background-color: #fbbf24;
+      color: #1f2937;
+      font-weight: 700;
+    }
+
+    /* Hero Section */
+    .hero {
+      background: linear-gradient(135deg, #3b82f6 0%, #60a5fa 100%);
+      color: #fff;
+      padding: 4rem 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 2rem;
+    }
+    .hero-container {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      max-width: 1200px;
+      width: 100%;
+      flex-wrap: wrap;
+      gap: 2rem;
+    }
+    .hero-text {
+      flex: 1 1 400px;
+      max-width: 600px;
+    }
+    .hero-text h1 {
+      font-size: 2.75rem;
+      font-weight: 700;
+      margin-bottom: 1rem;
+      line-height: 1.1;
+      text-shadow: 0 2px 6px rgba(0,0,0,0.3);
+    }
+    .hero-text p {
+      font-size: 1.2rem;
+      margin-bottom: 2rem;
+      color: #dbeafe;
+      text-shadow: 0 1px 3px rgba(0,0,0,0.2);
+    }
+    .btn-gradient {
+      display: inline-block;
+      background: linear-gradient(to right, #fbbf24, #f59e0b);
+      color: #1f2937;
+      font-weight: 700;
+      padding: 0.9rem 2.2rem;
+      border-radius: 9999px;
+      box-shadow: 0 8px 20px rgba(251, 191, 36, 0.4);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      font-size: 1.05rem;
+      animation: bounceIn 0.6s ease-out;
+    }
+    .btn-gradient:hover,
+    .btn-gradient:focus {
+      background: linear-gradient(to right, #f59e0b, #d97706);
+      box-shadow: 0 10px 24px rgba(245, 158, 11, 0.5);
+      transform: scale(1.05);
+      color: #fff;
+    }
+    @keyframes bounceIn {
+      0% {
+        transform: scale(0.9);
+        opacity: 0;
+      }
+      60% {
+        transform: scale(1.05);
+        opacity: 1;
+      }
+      100% {
+        transform: scale(1);
+      }
+    }
+
+    .hero-image {
+      flex: 1 1 400px;
+      max-width: 500px;
+      text-align: center;
+    }
+    .hero-image img {
+      border-radius: 12px;
+      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
+      max-height: 360px;
+      object-fit: contain;
+    }
+
+    /* Services Section */
+    .services {
+      padding: 4rem 0;
+      background-color: #ffffff;
+    }
+    .services-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fit,minmax(280px,1fr));
+      gap: 2.5rem;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    .card {
+      background-color: #f3f4f6;
+      border-radius: 12px;
+      padding: 2rem;
+      box-shadow: 0 4px 12px rgb(0 0 0 / 0.05);
+      text-align: center;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      cursor: default;
+      user-select: none;
+    }
+    .card:hover {
+      transform: translateY(-8px);
+      box-shadow: 0 12px 20px rgb(0 0 0 / 0.1);
+    }
+    .card img {
+      width: 100%;
+      height: 50%;
+      margin-bottom: 1.25rem;
+      filter: drop-shadow(0 2px 2px rgb(0 0 0 / 0.1));
+    }
+    .card h3 {
+      font-size: 1.4rem;
+      margin-bottom: 0.75rem;
+      color: #2563eb;
+      font-weight: 700;
+    }
+    .card p {
+      font-size: 1rem;
+      color: #4b5563;
+      line-height: 1.4;
+    }
+
+    /* Footer */
+    footer {
+      background-color: #1f2937;
+      color: #9ca3af;
+      text-align: center;
+      padding: 1rem 0;
+      margin-top: auto;
+      font-size: 0.9rem;
+      user-select: none;
+    }
+
+    @media (max-width: 768px) {
+      .hero-text h1 {
+        font-size: 2rem;
+      }
+      .hero-text p {
+        font-size: 1rem;
+      }
+    }
+    @media (max-width: 480px) {
+      nav ul {
+        flex-direction: column;
+        gap: 1rem;
+      }
+      .hero-container {
+        flex-direction: column;
+      }
+      .hero-image {
+        max-width: 100%;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- Header -->
+  <header>
+    <div class="container nav-container">
+      <div class="logo">Sales<span>MS</span></div>
+      <nav>
+        <ul class="nav-links" role="list">
+          <li><a href="index.html" class="active" aria-current="page"><i class="fa-solid fa-house"></i> Home</a></li>
+          <li><a href="about.html"><i class="fa-solid fa-circle-info"></i> About Us</a></li>
+          <li><a href="contact us.html"><i class="fa-solid fa-envelope"></i> Contact Us</a></li>
+          <li><a href="sign up.html"><i class="fa-solid fa-user-plus"></i> Sign up/Login</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Hero Section -->
+  <section class="hero" aria-label="Main introduction">
+    <div class="container hero-container">
+      <div class="hero-text">
+        <h1>Empower Your Sales Journey 🚀</h1>
+        <p>All-in-one solution to manage your customers, sales, and grow faster than ever before!</p>
+        <a href="sign up.html" class="btn-gradient" role="button"><span>🚀 Get Started</span></a>
+      </div>
+      <div class="hero-image">
+        <img src="Screenshot 2025-04-27 232836.png" alt="Illustration showing sales management dashboard" />
+      </div>
+    </div>
+  </section>
+
+  <!-- Services Cards -->
+  <section class="services" aria-label="Services offered">
+    <div class="container services-container">
+      <article class="card" tabindex="0" aria-label="Manage Customers service">
+        <img src="sales management project.png" alt="Manage Customers icon"/>
+        <h3>Manage Customers</h3>
+        <p>Track your customer interactions and improve relationships with smart CRM tools.</p>
+      </article>
+
+      <article class="card" tabindex="0" aria-label="Manage Stocks service">
+        <img src="manage stocks.jpg" alt="Manage Stocks icon" />
+        <h3>Manage Stocks</h3>
+        <p>Stay updated with real-time stock management and inventory tracking system.</p>
+      </article>
+
+      <article class="card" tabindex="0" aria-label="Advertisement service">
+        <img src="advertisement.jpg" alt="Advertisement icon" />
+        <h3>Advertisement</h3>
+        <p>Promote your products effectively with modern digital marketing tools and campaigns.</p>
+      </article>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer>
+    <div class="container footer-container">
+      <p>&copy; 2025 Sales Management System | All Rights Reserved</p>
+    </div>
+  </footer>
+
+</body>
+</html>

@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Purchase Entry</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      padding: 0 20px;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: radial-gradient(circle at top left, #c7f0db, #a7e0cd, #d9f6e3);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      overflow: hidden;
+      animation: backgroundShift 10s ease-in-out infinite alternate;
+      color: #1f2937;
+    }
+
+    @keyframes backgroundShift {
+      0% { background-position: top left; }
+      100% { background-position: bottom right; }
+    }
+
+    .card {
+      background: #fff;
+      padding: 2.5rem 3rem;
+      border-radius: 20px;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.07), 0 15px 40px rgba(16, 185, 129, 0.2);
+      width: 100%;
+      max-width: 800px;
+      max-height: 100vh;
+      overflow-y: auto;
+      animation: fadeInUp 0.8s ease;
+      transition: box-shadow 0.3s ease;
+      position: relative;
+    }
+
+    .card:hover {
+      box-shadow: 0 12px 40px rgba(16, 185, 129, 0.3), 0 20px 60px rgba(5, 150, 105, 0.3);
+    }
+
+    @keyframes fadeInUp {
+      0% { opacity: 0; transform: translateY(30px); }
+      100% { opacity: 1; transform: translateY(0); }
+    }
+
+    h1 {
+      text-align: center;
+      font-size: 2.2rem;
+      color: #059669;
+      margin-bottom: 1.6rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.6rem;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 0.35rem;
+      font-weight: 600;
+      color: #374151;
+      letter-spacing: 0.03em;
+    }
+
+    input[type="text"],
+    input[type="number"],
+    input[type="date"] {
+      width: 100%;
+      padding: 0.75rem 1rem;
+      margin-bottom: 1.2rem;
+      border: 2px solid #d1d5db;
+      border-radius: 12px;
+      font-size: 1.05rem;
+      background-color: #f9fafb;
+      font-weight: 500;
+      color: #111827;
+    }
+
+    input:focus {
+      border-color: #10b981;
+      box-shadow: 0 0 8px #10b981cc;
+      background-color: #ffffff;
+      outline: none;
+    }
+
+    button {
+      width: 100%;
+      padding: 0.9rem;
+      background: linear-gradient(135deg, #10b981, #059669);
+      color: white;
+      border: none;
+      border-radius: 14px;
+      font-size: 1.15rem;
+      font-weight: 700;
+      cursor: pointer;
+      box-shadow: 0 4px 10px rgba(5, 150, 105, 0.4), 0 8px 20px rgba(16, 185, 129, 0.4);
+    }
+
+    button:hover {
+      background: linear-gradient(135deg, #059669, #047857);
+      transform: translateY(-2px);
+    }
+
+    .success-message {
+      display: none;
+      margin-top: 1.3rem;
+      text-align: center;
+      color: #16a34a;
+      font-weight: 700;
+      font-size: 1.1rem;
+      animation: pulseScale 1.5s ease-in-out infinite alternate;
+    }
+
+    @keyframes pulseScale {
+      from { transform: scale(1); opacity: 0.9; }
+      to { transform: scale(1.07); opacity: 1; }
+    }
+
+    .button-row {
+      display: flex;
+      gap: 1rem;
+      margin-top: 1.8rem;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .button-row a {
+      flex: 1 1 140px;
+      text-align: center;
+      text-decoration: none;
+      padding: 0.75rem 1.2rem;
+      border-radius: 14px;
+      font-weight: 700;
+      font-size: 1.1rem;
+      color: white;
+      background-color: #3b82f6;
+    }
+
+    .button-row a:hover {
+      background-color: #2563eb;
+      transform: translateY(-2px);
+    }
+
+    #totalAmount {
+      text-align: center;
+      font-weight: 600;
+      font-size: 1.1rem;
+      color: #059669;
+      margin-top: -1rem;
+      margin-bottom: 1.5rem;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="card" role="main" aria-label="Purchase entry form">
+    <h1>📦 Purchase Entry</h1>
+    <form id="purchaseForm" novalidate>
+      <label for="invoiceNumber">Invoice No.</label>
+      <input type="text" id="invoiceNumber" placeholder="Enter invoice" required autocomplete="off">
+
+      <label for="supplierName">Supplier Name</label>
+      <input type="text" id="supplierName" placeholder="Enter supplier name" required autocomplete="off" />
+
+      <label for="productName">Product Name</label>
+      <input type="text" id="productName" placeholder="Enter product name" required autocomplete="off" />
+
+      <label for="brandName">Brand Name</label>
+      <input type="text" id="brandName" placeholder="Enter brand" required>
+
+      <label for="quantity">Quantity</label>
+      <input type="number" id="quantity" placeholder="Enter quantity" min="1" required />
+
+      <label for="cost">Cost per Unit ($)</label>
+      <input type="number" id="cost" placeholder="Enter cost" min="0.01" step="0.01" required />
+
+      <p id="totalAmount"></p>
+
+      <label for="date">Date of Purchase</label>
+      <input type="date" id="date" required />
+
+      <button type="submit" aria-label="Submit purchase entry">Submit</button>
+    </form>
+
+    <div class="success-message" id="successMsg" role="alert">
+      Purchase entry saved successfully!
+    </div>
+
+    <div class="button-row">
+      <a href="purchase-record.html">View Purchase Record</a>
+      <a href="dashboard.html">Go to Dashboard</a>
+    </div>
+  </div>
+
+  <script>
+    const form = document.getElementById('purchaseForm');
+    const successMsg = document.getElementById('successMsg');
+    const totalAmountDisplay = document.getElementById('totalAmount');
+    const quantityInput = form.quantity;
+    const costInput = form.cost;
+
+    // Auto-fill today's date
+    document.getElementById('date').valueAsDate = new Date();
+
+    function updateTotal() {
+      const qty = Number(quantityInput.value);
+      const cost = Number(costInput.value);
+      if (qty > 0 && cost > 0) {
+        totalAmountDisplay.textContent = `Total: $${(qty * cost).toFixed(2)}`;
+      } else {
+        totalAmountDisplay.textContent = '';
+      }
+    }
+
+    quantityInput.addEventListener('input', updateTotal);
+    costInput.addEventListener('input', updateTotal);
+
+    form.addEventListener('submit', function (event) {
+      event.preventDefault();
+
+      const invoiceNumber = form.invoiceNumber.value.trim();
+      const supplierName = form.supplierName.value.trim();
+      const productName = form.productName.value.trim();
+      const brandName = form.brandName.value.trim();
+      const quantity = Number(form.quantity.value);
+      const cost = Number(form.cost.value);
+      const date = form.date.value;
+
+      if (!invoiceNumber || !supplierName || !productName || !brandName || quantity < 1 || cost <= 0 || !date) {
+        alert('Please fill in all fields with valid values.');
+        return;
+      }
+
+      const purchaseEntry = {
+        invoiceNumber,
+        supplierName,
+        productName,
+        brandName,
+        quantity,
+        cost,
+        date,
+        timestamp: new Date().toISOString()
+      };
+
+      let purchases = JSON.parse(localStorage.getItem('purchaseEntries') || '[]');
+
+      // Check for duplicate invoice number
+      const duplicate = purchases.some(entry => entry.invoiceNumber === invoiceNumber);
+      if (duplicate) {
+        alert('An entry with this Invoice Number already exists.');
+        return;
+      }
+
+      purchases.push(purchaseEntry);
+      localStorage.setItem('purchaseEntries', JSON.stringify(purchases));
+
+      successMsg.style.display = 'block';
+      form.reset();
+      totalAmountDisplay.textContent = '';
+
+      setTimeout(() => {
+        successMsg.style.display = 'none';
+      }, 3000);
+    });
+  </script>
+
+</body>
+</html>

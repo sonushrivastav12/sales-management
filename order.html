@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Create Order</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+  </style>
+</head>
+<body class="bg-gradient-to-br from-indigo-100 to-pink-100 min-h-screen flex items-center justify-center p-6">
+
+  <div class="bg-white rounded-3xl shadow-2xl p-10 w-full max-w-xl space-y-8">
+    <h2 class="text-4xl font-extrabold text-center text-indigo-700">📝 Order</h2>
+
+    <form id="orderForm" class="space-y-5">
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-1">Customer Name</label>
+        <input type="text" id="customerName" required class="w-full border border-gray-300 rounded-xl px-4 py-3 focus:ring-2 focus:ring-indigo-400 outline-none" />
+      </div>
+
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-1">Product Name</label>
+        <input type="text" id="productName" required class="w-full border border-gray-300 rounded-xl px-4 py-3 focus:ring-2 focus:ring-indigo-400 outline-none" />
+      </div>
+
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-1">Company Name</label>
+        <input type="text" id="companyName" required class="w-full border border-gray-300 rounded-xl px-4 py-3 focus:ring-2 focus:ring-indigo-400 outline-none" />
+      </div>
+
+      <div class="grid grid-cols-2 gap-4">
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">Quantity</label>
+          <input type="number" id="quantity" min="1" required class="w-full border border-gray-300 rounded-xl px-4 py-3 focus:ring-2 focus:ring-indigo-400 outline-none" />
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">Price</label>
+          <input type="number" id="price" min="0" step="0.01" required class="w-full border border-gray-300 rounded-xl px-4 py-3 focus:ring-2 focus:ring-indigo-400 outline-none" />
+        </div>
+      </div>
+
+      <p id="totalAmount" class="text-right text-indigo-600 font-bold text-lg"></p>
+
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-1">Payment Method</label>
+        <select id="paymentMethod" required class="w-full border border-gray-300 rounded-xl px-4 py-3 focus:ring-2 focus:ring-indigo-400 outline-none">
+          <option value="" disabled selected>Select Payment Method</option>
+          <option value="Cash">Cash</option>
+          <option value="Card">Card</option>
+          <option value="UPI">UPI</option>
+          <option value="QR">QR</option>
+          <option value="Bank Transfer">Bank Transfer</option>
+        </select>
+      </div>
+
+      <div id="paymentFields" class="space-y-4"></div>
+
+      <button type="submit" class="w-full bg-indigo-600 text-white py-3 rounded-xl font-semibold text-lg hover:bg-indigo-700 transition duration-200 shadow-md">
+        📦 Submit Order
+      </button>
+    </form>
+
+    <div class="flex justify-between gap-4 mt-6">
+      <a href="order-records.html" class="flex-1 bg-purple-600 text-white py-3 rounded-xl font-medium text-center hover:bg-purple-700 transition duration-200 shadow-md">
+        📋 View Records
+      </a>
+      <a href="dashboard.html" class="flex-1 bg-green-600 text-white py-3 rounded-xl font-medium text-center hover:bg-green-700 transition duration-200 shadow-md">
+        🏠 Go to Dashboard
+      </a>
+    </div>
+  </div>
+
+  <script>
+    const paymentSelect = document.getElementById('paymentMethod');
+    const paymentFields = document.getElementById('paymentFields');
+    const form = document.getElementById('orderForm');
+    const quantityInput = document.getElementById('quantity');
+    const priceInput = document.getElementById('price');
+    const totalAmount = document.getElementById('totalAmount');
+
+    function updatePaymentFields() {
+      const method = paymentSelect.value;
+      paymentFields.innerHTML = '';
+
+      if (method === 'UPI') {
+        paymentFields.innerHTML = `
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">UPI Number</label>
+            <input type="text" id="upiNumber" required class="w-full border border-gray-300 rounded-xl px-4 py-3 focus:ring-2 focus:ring-indigo-400 outline-none" />
+          </div>`;
+      } else if (method === 'QR') {
+        paymentFields.innerHTML = `
+          <div class="text-center space-y-3">
+            <label class="block text-sm font-medium text-gray-700">Scan the QR Code</label>
+            <img src="https://api.qrserver.com/v1/create-qr-code/?data=PayToBusiness&size=150x150" alt="QR Code" class="mx-auto rounded-xl border shadow-md" />
+            <button type="button" onclick="confirmQRPayment()" class="bg-green-600 text-white px-4 py-2 rounded-xl font-medium hover:bg-green-700 transition duration-200">
+              ✅ Payment Done
+            </button>
+          </div>`;
+      } else if (method === 'Bank Transfer') {
+        paymentFields.innerHTML = `
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Account Number</label>
+            <input type="text" id="accountNumber" required class="w-full border border-gray-300 rounded-xl px-4 py-3 focus:ring-2 focus:ring-indigo-400 outline-none" />
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">IFSC Code</label>
+            <input type="text" id="ifscCode" required class="w-full border border-gray-300 rounded-xl px-4 py-3 focus:ring-2 focus:ring-indigo-400 outline-none" />
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Upload Payment Screenshot</label>
+            <input type="file" id="paymentProof" class="w-full border border-gray-300 rounded-xl px-4 py-2 focus:ring-2 focus:ring-indigo-400 outline-none" />
+          </div>`;
+      }
+    }
+
+    function confirmQRPayment() {
+      alert("✅ Payment confirmed via QR.");
+    }
+
+    function updateTotal() {
+      const qty = parseFloat(quantityInput.value);
+      const prc = parseFloat(priceInput.value);
+      const total = (!isNaN(qty) && !isNaN(prc)) ? (qty * prc).toFixed(2) : '';
+      totalAmount.innerText = total ? `Total: ₹${total}` : '';
+    }
+
+    paymentSelect.addEventListener('change', updatePaymentFields);
+    quantityInput.addEventListener('input', updateTotal);
+    priceInput.addEventListener('input', updateTotal);
+
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+
+      const method = paymentSelect.value;
+      if (!method) return alert("⚠️ Please select a payment method.");
+
+      const order = {
+        customerName: document.getElementById('customerName').value.trim(),
+        productName: document.getElementById('productName').value.trim(),
+        companyName: document.getElementById('companyName').value.trim(),
+        quantity: parseInt(document.getElementById('quantity').value),
+        price: parseFloat(document.getElementById('price').value),
+        paymentMethod: method,
+        paymentDetails: {},
+        total: (parseFloat(document.getElementById('quantity').value) * parseFloat(document.getElementById('price').value)).toFixed(2),
+        date: new Date().toLocaleString()
+      };
+
+      // Add specific payment details
+      if (method === 'UPI') {
+        const upi = document.getElementById('upiNumber')?.value.trim();
+        if (!upi) return alert("⚠️ Please enter UPI number.");
+        order.paymentDetails.upiNumber = upi;
+      } else if (method === 'QR') {
+        order.paymentDetails.confirmation = "Paid via QR";
+      } else if (method === 'Bank Transfer') {
+        const acc = document.getElementById('accountNumber')?.value.trim();
+        const ifsc = document.getElementById('ifscCode')?.value.trim();
+        const proof = document.getElementById('paymentProof');
+        if (!acc || !ifsc) return alert("⚠️ Please fill in bank details.");
+        order.paymentDetails.accountNumber = acc;
+        order.paymentDetails.ifscCode = ifsc;
+        order.paymentDetails.proofFile = proof?.files[0]?.name || "Not uploaded";
+      }
+
+      // Save to localStorage
+      const orders = JSON.parse(localStorage.getItem('simpleOrders') || '[]');
+      orders.push(order);
+      localStorage.setItem('simpleOrders', JSON.stringify(orders));
+
+      alert("✅ Order submitted successfully!");
+      form.reset();
+      paymentFields.innerHTML = '';
+      totalAmount.innerText = '';
+      paymentSelect.value = "";
+    });
+
+    window.addEventListener('DOMContentLoaded', () => {
+      paymentSelect.value = "";
+      paymentFields.innerHTML = '';
+    });
+  </script>
+
+</body>
+</html>

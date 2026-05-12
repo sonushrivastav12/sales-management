@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Sales / Sales Return Entry</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(to right, #e0eafc, #cfdef3);
+      margin: 0;
+      padding: 20px;
+    }
+
+    .container {
+      max-width: 650px;
+      margin: auto;
+      background: #fff;
+      padding: 30px;
+      border-radius: 15px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+    }
+
+    h2 {
+      text-align: center;
+      color: #2c3e50;
+      margin-bottom: 25px;
+    }
+
+    label {
+      font-weight: 600;
+      display: block;
+      margin-top: 15px;
+      margin-bottom: 5px;
+      color: #34495e;
+    }
+
+    input,
+    select,
+    textarea {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      font-size: 14px;
+      transition: all 0.3s ease-in-out;
+    }
+
+    input:focus,
+    select:focus,
+    textarea:focus {
+      border-color: #3498db;
+      outline: none;
+      box-shadow: 0 0 5px rgba(52, 152, 219, 0.3);
+    }
+
+    textarea {
+      resize: vertical;
+      min-height: 70px;
+    }
+
+    .return-fields {
+      display: none;
+      margin-top: 15px;
+      padding: 15px;
+      border: 1px solid #e1e1e1;
+      background-color: #f9f9f9;
+      border-radius: 10px;
+    }
+
+    button {
+      display: block;
+      width: 100%;
+      margin-top: 20px;
+      padding: 12px;
+      font-size: 16px;
+      font-weight: bold;
+      background-color: #3498db;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    button:hover {
+      background-color: #2980b9;
+    }
+
+    .view-btn {
+      background-color: #2ecc71;
+    }
+
+    .view-btn:hover {
+      background-color: #27ae60;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>Sales / Sales Return Entry</h2>
+    <form id="transactionForm">
+      <label for="type">Transaction Type</label>
+      <select id="type" required>
+        <option value="">-- Select Type --</option>
+        <option value="Sale">Sale</option>
+        <option value="Return">Return</option>
+      </select>
+
+      <label for="invoice">Invoice Number</label>
+      <input type="text" id="invoice" required>
+
+      <label for="date">Date</label>
+      <input type="date" id="date" required>
+
+      <label for="customer">Customer Name</label>
+      <input type="text" id="customer" required>
+
+      <label for="product">Product Name</label>
+      <input type="text" id="product" required>
+
+      <label for="quantity">Quantity</label>
+      <input type="number" id="quantity" required min="1">
+
+      <label for="price">Unit Price</label>
+      <input type="number" id="price" required step="0.01" min="0">
+
+      <label for="payment">Payment Method</label>
+      <select id="payment" required>
+        <option value="">-- Select Payment --</option>
+        <option value="Cash">Cash</option>
+        <option value="Card">Card</option>
+        <option value="UPI">UPI</option>
+        <option value="Credit">Credit</option>
+      </select>
+
+      <div class="return-fields" id="returnFields">
+        <label for="reason">Return Reason</label>
+        <textarea id="reason" placeholder="Enter reason for return..."></textarea>
+
+        <label for="refund">Refund Method</label>
+        <select id="refund">
+          <option value="">-- Select Refund --</option>
+          <option value="Cash">Cash</option>
+          <option value="Bank Transfer">Bank Transfer</option>
+          <option value="Credit Note">Credit Note</option>
+        </select>
+      </div>
+
+      <button type="submit">Save Transaction</button>
+    </form>
+
+    <button class="view-btn" onclick="window.location.href='sales both record.html'">View Records</button>
+  </div>
+
+  <script>
+    const typeField = document.getElementById("type");
+    const returnFields = document.getElementById("returnFields");
+
+    typeField.addEventListener("change", () => {
+      returnFields.style.display = typeField.value === "Return" ? "block" : "none";
+    });
+
+    document.getElementById("transactionForm").addEventListener("submit", function(e) {
+      e.preventDefault();
+
+      const transaction = {
+        type: document.getElementById("type").value,
+        invoice: document.getElementById("invoice").value,
+        date: document.getElementById("date").value,
+        customer: document.getElementById("customer").value,
+        product: document.getElementById("product").value,
+        quantity: +document.getElementById("quantity").value,
+        price: +document.getElementById("price").value,
+        payment: document.getElementById("payment").value,
+        reason: document.getElementById("reason").value,
+        refund: document.getElementById("refund").value,
+        totalAmount: +document.getElementById("quantity").value * +document.getElementById("price").value
+      };
+
+      let data = JSON.parse(localStorage.getItem("transactionsData")) || [];
+      data.push(transaction);
+      localStorage.setItem("transactionsData", JSON.stringify(data));
+
+      alert("Transaction saved successfully!");
+      this.reset();
+      returnFields.style.display = "none";
+    });
+  </script>
+</body>
+</html>

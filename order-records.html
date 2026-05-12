@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Order Records</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    .btn-edit {
+      background: linear-gradient(135deg, #facc15, #eab308);
+      box-shadow: 0 4px 6px rgba(234,179,8,0.4);
+      font-weight: 600;
+      padding: 0.4rem 1rem;
+      border-radius: 0.5rem;
+      cursor: pointer;
+      transition: background 0.3s ease, transform 0.2s ease;
+      color: #1e293b;
+    }
+    .btn-edit:hover {
+      background: linear-gradient(135deg, #eab308, #ca8a04);
+      transform: scale(1.05);
+    }
+    .btn-delete {
+      background: linear-gradient(135deg, #ef4444, #b91c1c);
+      box-shadow: 0 4px 6px rgba(185,28,28,0.4);
+      font-weight: 600;
+      padding: 0.4rem 1rem;
+      border-radius: 0.5rem;
+      cursor: pointer;
+      transition: background 0.3s ease, transform 0.2s ease;
+      color: white;
+    }
+    .btn-delete:hover {
+      background: linear-gradient(135deg, #b91c1c, #7f1d1d);
+      transform: scale(1.05);
+    }
+    input[disabled] {
+      background-color: transparent;
+      border: none;
+      color: #374151;
+      font-weight: 600;
+      cursor: default;
+    }
+    input:focus {
+      outline: 2px solid #6366f1;
+      background-color: white;
+      border-radius: 0.375rem;
+      color: #111827;
+      font-weight: 700;
+      cursor: text;
+      transition: all 0.2s ease;
+    }
+    table {
+      border-collapse: collapse;
+      width: 100%;
+      min-width: 700px;
+    }
+    thead tr {
+      position: sticky;
+      top: 0;
+      background-color: #e0e7ff;
+      z-index: 10;
+      box-shadow: inset 0 -2px 2px -1px rgb(99 102 241 / 0.7);
+    }
+    tbody tr:hover {
+      background-color: #f3f4f6;
+      transition: background-color 0.2s ease;
+    }
+    .container {
+      max-width: 800px;
+      width: 100%;
+      margin: 1.5rem auto;
+      background: white;
+      border-radius: 1.5rem;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.12);
+      padding: 1.5rem 2rem;
+    }
+    .btn-group {
+      margin-top: 2rem;
+      display: flex;
+      justify-content: center;
+      gap: 1.5rem;
+      flex-wrap: wrap;
+    }
+    .nav-btn {
+      padding: 0.75rem 1.75rem;
+      font-weight: 700;
+      border-radius: 1rem;
+      transition: background-color 0.3s ease, transform 0.2s ease;
+      cursor: pointer;
+      box-shadow: 0 5px 12px rgb(0 0 0 / 0.1);
+    }
+    .nav-btn:hover {
+      transform: scale(1.05);
+    }
+    .nav-btn:active {
+      transform: scale(0.95);
+    }
+    .back-btn {
+      background-color: #4f46e5;
+      color: white;
+    }
+    .back-btn:hover {
+      background-color: #4338ca;
+    }
+    .dash-btn {
+      background-color: #16a34a;
+      color: white;
+    }
+    .dash-btn:hover {
+      background-color: #15803d;
+    }
+    .table-wrapper {
+      overflow-x: auto;
+    }
+    td:nth-child(6) input {
+      text-align: center !important;
+    }
+  </style>
+</head>
+<body class="bg-gradient-to-br from-indigo-100 to-pink-100 min-h-screen flex flex-col items-center p-6">
+
+  <main class="container">
+    <h1 class="text-4xl font-extrabold text-indigo-700 mb-8 text-center">📋 Order Records</h1>
+
+    <div class="table-wrapper">
+      <table>
+        <thead>
+          <tr>
+            <th class="border px-4 py-2 text-center">ID</th>
+            <th class="border px-4 py-2">Customer Name</th>
+            <th class="border px-4 py-2">Product Name</th>
+            <th class="border px-4 py-2">Company Name</th>
+            <th class="border px-4 py-2 text-center">Qty</th>
+            <th class="border px-4 py-2 text-center">Price</th>
+            <th class="border px-4 py-2">Date</th>
+            <th class="border px-4 py-2 text-center">Actions</th>
+          </tr>
+        </thead>
+        <tbody id="ordersTableBody" class="text-gray-700 text-sm bg-white">
+          <!-- Orders will appear here -->
+        </tbody>
+      </table>
+    </div>
+
+    <div class="btn-group">
+      <a href="order.html">
+      <button id="btnOrderForm" type="button" class="nav-btn back-btn">← Back to Order Form</button></a>
+      <button id="btnDashboard" type="button" class="nav-btn dash-btn">🏠 Go to Dashboard</button
+    </div>
+  </main>
+
+  <script>
+    const tbody = document.getElementById('ordersTableBody');
+    const btnOrderForm = document.getElementById('btnOrderForm');
+    const btnDashboard = document.getElementById('btnDashboard');
+
+    let orders = JSON.parse(localStorage.getItem('simpleOrders') || '[]');
+
+    function saveOrders() {
+      localStorage.setItem('simpleOrders', JSON.stringify(orders));
+    }
+
+    function renderOrders() {
+      tbody.innerHTML = '';
+
+      if (orders.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="8" class="text-center py-6 text-gray-500">No orders found.</td></tr>`;
+        return;
+      }
+
+      orders.forEach((order, i) => {
+        const tr = document.createElement('tr');
+        tr.classList.add('border-b');
+
+        tr.innerHTML = `
+          <td class="border px-4 py-2 text-center">${i + 1}</td>
+          <td class="border px-4 py-2"><input type="text" value="${order.customerName}" disabled /></td>
+          <td class="border px-4 py-2"><input type="text" value="${order.productName}" disabled /></td>
+          <td class="border px-4 py-2"><input type="text" value="${order.companyName}" disabled /></td>
+          <td class="border px-4 py-2 text-center"><input type="number" value="${order.quantity}" disabled class="w-16 text-center" /></td>
+          <td class="border px-4 py-2 text-center"><input type="number" value="${order.price.toFixed(2)}" disabled class="w-24 text-center" /></td>
+          <td class="border px-4 py-2"><input type="text" value="${order.date}" disabled /></td>
+          <td class="border px-4 py-2 text-center space-x-2">
+            <button class="btn-edit">Edit</button>
+            <button class="btn-delete">Delete</button>
+          </td>
+        `;
+
+        tbody.appendChild(tr);
+
+        const editBtn = tr.querySelector('.btn-edit');
+        const deleteBtn = tr.querySelector('.btn-delete');
+        const inputs = tr.querySelectorAll('input');
+
+        editBtn.addEventListener('click', () => {
+          if (editBtn.textContent === "Edit") {
+            inputs.forEach(input => input.disabled = false);
+            editBtn.textContent = "Save";
+            inputs[0].focus();
+          } else {
+            const updatedOrder = {
+              customerName: inputs[0].value.trim(),
+              productName: inputs[1].value.trim(),
+              companyName: inputs[2].value.trim(),
+              quantity: parseInt(inputs[3].value),
+              price: parseFloat(inputs[4].value),
+              date: inputs[5].value
+            };
+
+            if (!updatedOrder.customerName || !updatedOrder.productName || !updatedOrder.companyName ||
+                isNaN(updatedOrder.quantity) || updatedOrder.quantity < 1 ||
+                isNaN(updatedOrder.price) || updatedOrder.price < 0 ||
+                !updatedOrder.date) {
+              alert("Please fill in valid data for all fields.");
+              return;
+            }
+
+            orders[i] = updatedOrder;
+            saveOrders();
+            renderOrders();
+          }
+        });
+
+        deleteBtn.addEventListener('click', () => {
+          if (confirm("Are you sure you want to delete this order?")) {
+            orders.splice(i, 1);
+            saveOrders();
+            renderOrders();
+          }
+        });
+      });
+    }
+
+    btnOrderForm.addEventListener('click', () => {
+      window.location.href = 'orderForm.html'; // ✅ Ensure this file exists!
+    });
+
+    btnDashboard.addEventListener('click', () => {
+      window.location.href = 'dashboard.html'; // ✅ Ensure this file exists!
+    });
+
+    renderOrders();
+  </script>
+</body>
+</html>

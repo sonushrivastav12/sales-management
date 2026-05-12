@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Purchase Return Records</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+  <style>
+    body {
+      margin: 0;
+      padding: 20px;
+      background: linear-gradient(to right, #c2e9fb, #a1c4fd);
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    h1 {
+      text-align: center;
+      color: #2c3e50;
+      margin-bottom: 30px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: white;
+      border-radius: 10px;
+      overflow: hidden;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+    }
+
+    th, td {
+      padding: 12px 15px;
+      text-align: center;
+      border-bottom: 1px solid #ddd;
+    }
+
+    th {
+      background-color: #3498db;
+      color: white;
+    }
+
+    tr:hover {
+      background-color: #f1f1f1;
+    }
+
+    .btn {
+      padding: 6px 10px;
+      border: none;
+      border-radius: 5px;
+      color: white;
+      font-size: 14px;
+      cursor: pointer;
+      transition: transform 0.2s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .btn:hover {
+      transform: scale(1.05);
+    }
+
+    .btn-view {
+      background: linear-gradient(to right, #00b09b, #96c93d);
+    }
+
+    .btn-update {
+      background: linear-gradient(to right, #f7971e, #ffd200);
+      color: #333;
+    }
+
+    .btn-delete {
+      background: linear-gradient(to right, #e53935, #e35d5b);
+    }
+
+    .action-buttons {
+      display: flex;
+      gap: 6px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .no-data {
+      text-align: center;
+      padding: 20px;
+      background-color: #fff3cd;
+      border-left: 6px solid #ffeeba;
+      color: #856404;
+      border-radius: 5px;
+      margin-top: 30px;
+    }
+
+    .footer-btn {
+      text-decoration: none;
+      padding: 12px 20px;
+      background-color: #3498db;
+      color: white;
+      border-radius: 8px;
+      font-weight: bold;
+      transition: background-color 0.3s ease, transform 0.2s ease;
+      display: inline-block;
+      font-size: 16px;
+    }
+
+    .footer-btn:hover {
+      background-color: #2c80b4;
+      transform: scale(1.05);
+    }
+
+    .footer-buttons {
+      margin-top: 40px;
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      flex-wrap: wrap;
+    }
+
+    input {
+      width: 90%;
+      padding: 4px;
+      font-size: 14px;
+      text-align: center;
+    }
+
+    /* Modal styles */
+    #invoiceModal {
+      display: none;
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: rgba(0,0,0,0.6);
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+      /* Flexbox centering */
+      display: flex;
+    }
+
+    #invoiceModal > div {
+      background: white;
+      padding: 20px 30px;
+      border-radius: 10px;
+      max-width: 500px;
+      width: 90%;
+      position: relative;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+      animation: fadeIn 0.3s ease;
+      /* Center content vertically and horizontally */
+      margin: auto;
+      text-align: left;
+    }
+
+    #invoiceModal h2 {
+      margin-top: 0;
+      text-align: center;
+      color: #3498db;
+    }
+
+    #invoiceContent p {
+      margin: 6px 0;
+      font-size: 15px;
+      color: #333;
+    }
+
+    /* Center the buttons inside the modal */
+    #invoiceModal > div > div:last-child {
+      text-align: center;
+      margin-top: 20px;
+      gap: 10px;
+      display: flex;
+      justify-content: center;
+    }
+
+    @keyframes fadeIn {
+      from {opacity: 0; transform: translateY(-20px);}
+      to {opacity: 1; transform: translateY(0);}
+    }
+
+    /* Hide buttons on print and align modal to top */
+    @media print {
+      body * {
+        visibility: hidden;
+      }
+      #invoiceModal, #invoiceModal * {
+        visibility: visible;
+      }
+      #invoiceModal {
+        position: static !important;
+        background: none !important;
+        display: block !important;
+
+        /* Remove flex centering on print */
+        justify-content: normal !important;
+        align-items: normal !important;
+
+        width: 100% !important;
+        height: auto !important;
+        padding-top: 0 !important;
+        margin: 0 !important;
+      }
+      #invoiceModal > div {
+        box-shadow: none !important;
+        border-radius: 0 !important;
+        padding: 0 !important;
+        max-width: none !important;
+        width: 100% !important;
+      }
+      #invoiceModal > div > div:last-child {
+        display: none; /* Hide Print & Cancel buttons on print */
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <h1>📄 Purchase Return Records</h1>
+  <table id="recordTable">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Invoice No</th>
+        <th>Supplier</th>
+        <th>Product</th>
+        <th>Brand</th>
+        <th>Qty</th>
+        <th>Cost</th>
+        <th>Total</th>
+        <th>Date</th>
+        <th>Reason</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+
+  <div id="noData" class="no-data" style="display:none;">No purchase return records found.</div>
+
+  <div class="footer-buttons">
+    <a href="purchase return.html" class="footer-btn">🔙 Back to Return Form</a>
+    <a href="purchase.html" class="footer-btn">🛒 Go Purchase Entry</a>
+    <a href="dashboard.html" class="footer-btn">🏠 Go to Dashboard</a>
+  </div>
+
+  <!-- Invoice Modal -->
+  <div id="invoiceModal" style="display:none;">
+    <div>
+      <h2>Purchase Return Invoice</h2>
+      <div id="invoiceContent"></div>
+      <div>
+        <button onclick="printInvoice()" class="btn btn-view"><i class="fas fa-print"></i> Print</button>
+        <button onclick="closeModal()" class="btn btn-delete"><i class="fas fa-times"></i> Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const tbody = document.querySelector("#recordTable tbody");
+    const noDataMsg = document.getElementById("noData");
+    let currentInvoiceIndex = null;
+
+    function renderTable() {
+      const data = JSON.parse(localStorage.getItem("purchaseReturnEntries") || "[]");
+      tbody.innerHTML = "";
+      if (data.length === 0) {
+        noDataMsg.style.display = "block";
+        return;
+      }
+
+      noDataMsg.style.display = "none";
+      data.forEach((entry, index) => {
+        const row = document.createElement("tr");
+
+        row.innerHTML = `
+          <td>${index + 1}</td>
+          <td>${entry.invoiceNo}</td>
+          <td>${entry.supplierName}</td>
+          <td>${entry.productName}</td>
+          <td>${entry.brandName}</td>
+          <td>${entry.quantity}</td>
+          <td>$${parseFloat(entry.cost).toFixed(2)}</td>
+          <td>$${(entry.quantity * entry.cost).toFixed(2)}</td>
+          <td>${entry.date}</td>
+          <td>${entry.reason}</td>
+          <td class="action-buttons">
+            <button class="btn btn-view" onclick="viewInvoice(${index})"><i class="fas fa-file-invoice"></i> View</button>
+            <button class="btn btn-update" onclick="updateEntry(${index})"><i class="fas fa-edit"></i> Update</button>
+            <button class="btn btn-delete" onclick="deleteEntry(${index})"><i class="fas fa-trash-alt"></i> Delete</button>
+          </td>
+        `;
+
+        tbody.appendChild(row);
+      });
+    }
+
+    function deleteEntry(index) {
+      if (confirm("Are you sure you want to delete this return record?")) {
+        const data = JSON.parse(localStorage.getItem("purchaseReturnEntries") || "[]");
+        data.splice(index, 1);
+        localStorage.setItem("purchaseReturnEntries", JSON.stringify(data));
+        renderTable();
+      }
+    }
+
+    function updateEntry(index) {
+      const data = JSON.parse(localStorage.getItem("purchaseReturnEntries") || "[]");
+      const entry = data[index];
+
+      const row = tbody.rows[index];
+      if (!row) return;
+
+      row.innerHTML = `
+        <td>${index + 1}</td>
+        <td><input id="inv${index}" value="${entry.invoiceNo}" /></td>
+        <td><input id="sup${index}" value="${entry.supplierName}" /></td>
+        <td><input id="prod${index}" value="${entry.productName}" /></td>
+        <td><input id="brand${index}" value="${entry.brandName}" /></td>
+        <td><input id="qty${index}" type="number" min="0" value="${entry.quantity}" /></td>
+        <td><input id="cost${index}" type="number" min="0" step="0.01" value="${entry.cost}" /></td>
+        <td>--</td>
+        <td><input id="date${index}" type="date" value="${entry.date}" /></td>
+        <td><input id="reason${index}" value="${entry.reason}" /></td>
+        <td class="action-buttons">
+          <button class="btn btn-update" onclick="saveEntry(${index})"><i class="fas fa-save"></i> Save</button>
+          <button class="btn btn-delete" onclick="renderTable()"><i class="fas fa-times"></i> Cancel</button>
+        </td>
+      `;
+    }
+
+    function saveEntry(index) {
+      const data = JSON.parse(localStorage.getItem("purchaseReturnEntries") || "[]");
+
+      const updatedEntry = {
+        invoiceNo: document.getElementById(`inv${index}`).value,
+        supplierName: document.getElementById(`sup${index}`).value,
+        productName: document.getElementById(`prod${index}`).value,
+        brandName: document.getElementById(`brand${index}`).value,
+        quantity: parseInt(document.getElementById(`qty${index}`).value) || 0,
+        cost: parseFloat(document.getElementById(`cost${index}`).value) || 0,
+        date: document.getElementById(`date${index}`).value,
+        reason: document.getElementById(`reason${index}`).value
+      };
+
+      data[index] = updatedEntry;
+      localStorage.setItem("purchaseReturnEntries", JSON.stringify(data));
+      renderTable();
+    }
+
+    function viewInvoice(index) {
+      const data = JSON.parse(localStorage.getItem("purchaseReturnEntries") || "[]");
+      const entry = data[index];
+      currentInvoiceIndex = index;
+
+      const invoiceHTML = `
+        <p><strong>Invoice No:</strong> ${entry.invoiceNo}</p>
+        <p><strong>Supplier:</strong> ${entry.supplierName}</p>
+        <p><strong>Product:</strong> ${entry.productName}</p>
+        <p><strong>Brand:</strong> ${entry.brandName}</p>
+        <p><strong>Quantity Returned:</strong> ${entry.quantity}</p>
+        <p><strong>Cost per Unit:</strong> $${parseFloat(entry.cost).toFixed(2)}</p>
+        <p><strong>Total:</strong> $${(entry.quantity * entry.cost).toFixed(2)}</p>
+        <p><strong>Date of Return:</strong> ${entry.date}</p>
+        <p><strong>Return Reason:</strong> ${entry.reason}</p>
+      `;
+
+      document.getElementById("invoiceContent").innerHTML = invoiceHTML;
+      document.getElementById("invoiceModal").style.display = "flex";
+    }
+
+    function closeModal() {
+      document.getElementById("invoiceModal").style.display = "none";
+    }
+
+    function printInvoice() {
+      window.print();
+    }
+
+    renderTable();
+  </script>
+</body>
+</html>

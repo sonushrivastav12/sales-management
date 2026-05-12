@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Product Records</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    .hover-link {
+      transition: all 0.3s ease;
+    }
+    .hover-link:hover {
+      background-color: #7c3aed;
+      color: white;
+      transform: scale(1.05);
+    }
+    .action-btn {
+      transition: all 0.2s ease;
+      min-width: 70px;
+    }
+    .action-btn:active {
+      transform: scale(0.95);
+    }
+    .editable-input[disabled] {
+      border: none;
+      background-color: transparent;
+      cursor: default;
+    }
+    .editable-input:not([disabled]) {
+      border: 1px solid #c4b5fd;
+      background-color: #f3e8ff;
+      border-radius: 0.375rem;
+      padding: 0.25rem 0.5rem;
+    }
+  </style>
+</head>
+<body class="bg-gradient-to-br from-purple-200 to-pink-200 min-h-screen flex flex-col items-center justify-start p-8 font-sans">
+
+  <div class="bg-white shadow-2xl rounded-3xl p-8 w-full max-w-6xl mt-8">
+    <h1 class="text-4xl font-extrabold text-center text-purple-700 mb-8">📦 Product Records</h1>
+
+    <div class="overflow-x-auto">
+      <table class="min-w-full table-auto text-left border-collapse rounded-xl overflow-hidden shadow-md">
+        <thead>
+          <tr class="bg-purple-100 text-purple-800 text-lg">
+            <th class="p-4 border-b w-20">ID</th>
+            <th class="p-4 border-b">Product Name</th>
+            <th class="p-4 border-b">Company</th>
+            <th class="p-4 border-b">Category</th>
+            <th class="p-4 border-b text-right w-28">Quantity</th>
+            <th class="p-4 border-b text-right w-28">Price ($)</th>
+            <th class="p-4 border-b text-center w-40">Actions</th>
+          </tr>
+        </thead>
+        <tbody id="recordsTable" class="bg-white text-gray-700 text-base">
+          <!-- Dynamic Rows -->
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Navigation Buttons -->
+    <div class="flex flex-col sm:flex-row justify-center items-center gap-6 mt-10">
+      <a href="product.html" class="hover-link bg-purple-100 text-purple-700 font-semibold text-lg px-6 py-2 rounded-md shadow-sm">← Back to Product Form</a>
+      <a href="dashboard.html" class="hover-link bg-purple-100 text-purple-700 font-semibold text-lg px-6 py-2 rounded-md shadow-sm">🏠 Go to Dashboard</a>
+    </div>
+  </div>
+
+  <script>
+    const recordsTable = document.getElementById("recordsTable");
+    let products = JSON.parse(localStorage.getItem("products") || "[]");
+
+    function saveToLocal() {
+      localStorage.setItem("products", JSON.stringify(products));
+    }
+
+    function loadTable() {
+      recordsTable.innerHTML = "";
+
+      if (products.length === 0) {
+        recordsTable.innerHTML = `<tr><td colspan="7" class="p-6 text-center text-gray-500 italic">No product records found.</td></tr>`;
+        return;
+      }
+
+      products.forEach((product, index) => {
+        const row = document.createElement("tr");
+        row.classList.add("hover:bg-purple-50");
+
+        row.innerHTML = `
+          <td class="p-4 border-b text-center font-semibold">${index + 1}</td>
+          <td class="p-4 border-b"><input class="editable-input w-full text-sm" value="${product.productName}" disabled /></td>
+          <td class="p-4 border-b"><input class="editable-input w-full text-sm" value="${product.companyName}" disabled /></td>
+          <td class="p-4 border-b"><input class="editable-input w-full text-sm" value="${product.category}" disabled /></td>
+          <td class="p-4 border-b text-right"><input type="number" class="editable-input w-full text-sm text-right" value="${product.quantity}" disabled /></td>
+          <td class="p-4 border-b text-right"><input type="number" step="0.01" class="editable-input w-full text-sm text-right" value="${product.price.toFixed(2)}" disabled /></td>
+          <td class="p-4 border-b text-center">
+            <div class="flex justify-center gap-2">
+              <button class="editBtn action-btn bg-yellow-400 text-white px-3 py-1 rounded-md hover:bg-yellow-500">Edit</button>
+              <button class="deleteBtn action-btn bg-red-500 text-white px-3 py-1 rounded-md hover:bg-red-600">Delete</button>
+            </div>
+          </td>
+        `;
+        recordsTable.appendChild(row);
+      });
+
+      addRowListeners();
+    }
+
+    function addRowListeners() {
+      document.querySelectorAll(".editBtn").forEach((btn, index) => {
+        btn.addEventListener("click", () => {
+          const row = btn.closest("tr");
+          const inputs = row.querySelectorAll("input");
+          const isEditing = btn.textContent === "Save";
+
+          if (isEditing) {
+            const updatedProduct = {
+              productName: inputs[0].value.trim(),
+              companyName: inputs[1].value.trim(),
+              category: inputs[2].value.trim(),
+              quantity: parseInt(inputs[3].value) || 0,
+              price: parseFloat(inputs[4].value) || 0,
+            };
+
+            if (
+              !updatedProduct.productName ||
+              !updatedProduct.companyName ||
+              !updatedProduct.category ||
+              updatedProduct.quantity < 0 ||
+              updatedProduct.price < 0
+            ) {
+              alert("Please fill all fields correctly.");
+              return;
+            }
+
+            products[index] = updatedProduct;
+            saveToLocal();
+            btn.textContent = "Edit";
+            inputs.forEach(input => (input.disabled = true));
+            row.classList.remove("bg-yellow-100");
+            loadTable();
+          } else {
+            btn.textContent = "Save";
+            inputs.forEach(input => (input.disabled = false));
+            inputs[0].focus();
+            row.classList.add("bg-yellow-100");
+          }
+        });
+      });
+
+      document.querySelectorAll(".deleteBtn").forEach((btn, index) => {
+        btn.addEventListener("click", () => {
+          if (confirm("Are you sure you want to delete this product?")) {
+            products.splice(index, 1);
+            saveToLocal();
+            loadTable();
+          }
+        });
+      });
+    }
+
+    loadTable();
+  </script>
+</body>
+</html>
